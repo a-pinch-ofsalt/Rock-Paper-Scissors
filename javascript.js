@@ -2,7 +2,7 @@
 //-----------------------------------------------
 
 function getPlayerInput() {
-    return prompt("Type rock, paper or scissors.")
+    return prompt("Type rock, paper or scissors.").toLowerCase()
 }
 
 function isRockPaperOrScissors(userInput) {
@@ -16,7 +16,7 @@ function notifyPlayerOfInvalidInput() {
 function getPlayerFinalChoice() {
     userInput = getPlayerInput();
 
-    if (isValidRockPaperOrScissors(userInput))
+    if (isRockPaperOrScissors(userInput))
         return userInput
     else
         notifyPlayerOfInvalidInput();
@@ -81,18 +81,18 @@ function determineWinningMove(choices) {
 
 //determine the winner based on who picked rock, paper or scissors
 
-function didPlayerWin(playerMove, winningMove) {
-    return playerMove === winningMove;
+function didPlayerWin(choices) {
+    return choices.player === determineWinningMove(choices);
 }
 
-function didComputerWin(computerMove, winningMove) {
-    return computerMove === winningMove;
+function didComputerWin(choices) {
+    return choices.player === determineWinningMove(choices);
 }
 
 function checkWhoWon(choices) {
-    if (playerMove === determineWinningMove(choices))
+    if (didPlayerWin(choices))
         return 'player'
-    else if (computerMove === determineWinningMove(choices))
+    else if (didComputerWin(choices))
         return 'computer'
     else return 'tie'
 }
@@ -107,6 +107,10 @@ function outputScores(scores) {
     console.log(`You: ${scores.player} wins\n Computer: ${scores.computer} wins\n`);
 }
 
+function outputChoices(choices) {
+    console.log(`You picked ${choices.player}. Computer picked ${choices.computer}.`)
+}
+
 //play rounds and keep track of score
 
 function getNewScoresAfterRound(winner, scores) {
@@ -118,7 +122,9 @@ function getNewScoresAfterRound(winner, scores) {
 }
 
 function playRoundThenGetWinner() {
-    return checkWhoWon(getPlayerAndComputerChoices())
+    choices = getPlayerAndComputerChoices();
+    outputChoices(choices);
+    return checkWhoWon(choices)
 }
 
 function playRounds(maxNumberOfRounds) 
@@ -133,7 +139,7 @@ function playRounds(maxNumberOfRounds)
         winner = playRoundThenGetWinner();
         scores = getNewScoresAfterRound(scores, winner);
         outputWinner(winner);
-        announceScores(scores);
+        outputScores(scores);
     }
 }
 

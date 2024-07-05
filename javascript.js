@@ -1,42 +1,60 @@
-//getting input
+//getting player's input to be valid
 //-----------------------------------------------
 
+function getPlayerInput() {
+    return prompt("Type rock, paper or scissors.")
+}
+
+function isRockPaperOrScissors(userInput) {
+    return ['rock', 'paper', 'scissors'].includes(userInput);
+}
+
+function notifyPlayerOfInvalidInput() {
+    console.log('That is not a valid input.\n');
+}
+
+function getPlayerFinalChoice() {
+    userInput = getPlayerInput();
+
+    if (isValidRockPaperOrScissors(userInput))
+        return userInput
+    else
+        notifyPlayerOfInvalidInput();
+        return getPlayerFinalChoice();
+}
+
+//getting the computer's choice (it's just random)
+//-----------------------------------------------
+
+function chooseRandomPositiveIntegerUpTo(maximum) {
+    return Math.floor(Math.random() * maximum) + 1
+}
+
+function pickRockPaperOrScissorsRandomly() {
+    return ['rock', 'paper', 'scissors'][chooseRandomPositiveIntegerUpTo(3) - 1]
+}
+
 function getComputerChoice() {
-
+    return pickRockPaperOrScissorsRandomly()
 }
-
-function convertComputerChoiceIntoRockPaperOrScissors() {
-
-}
-
-function getPlayerChoice() {
-
-}
-
 
 //calculating the winning move (rock vs scissors, paper vs rock, etc.)
 //-----------------------------------------------
 
-function calculateWinningMove(choice1, choice2) {
-    if (wasRockPlayed(choice1, choice2) && wasPaperPlayed(choice1, choice2))
-        return calculatePaperVsRock()
-    else if (wasRockPlayed(choice1, choice2) && wasScissorsPlayed(choice1, choice2)) 
-        return calculateRockVsScissors()
-    else if (wasScissorsPlayed(choice1, choice2) && wasPaperPlayed(choice1, choice2))
-        return calculateScissorsVsPaper()
-    else return 'tie'
+function getPlayerAndComputerChoices() {
+    return {'player': getPlayerFinalChoice(), 'computer': getComputerChoice()}
 }
 
-function wasRockPlayed(choice1, choice2) {
-    return [choice1, choice2].includes('rock')
+function wasRockPlayed(choices) {
+    return [choices.player, choices.computer].includes('rock')
 }
 
-function wasPaperPlayed(choice1, choice2) {
-    return [choice1, choice2].includes('paper')
+function wasPaperPlayed(choices) {
+    return [choices.player, choices.computer].includes('paper')
 }
 
-function wasScissorsPlayed(choice1, choice2) {
-    return [choice1, choice2].includes('scissors')
+function wasScissorsPlayed(choices) {
+    return [choices.player, choices.computer].includes('scissors')
 }
 
 function determineRockVsScissors() {
@@ -51,6 +69,16 @@ function determineScissorsVsPaper() {
     return 'scissors'
 }
 
+function determineWinningMove(choices) {
+    if (wasRockPlayed(choices) && wasPaperPlayed(choices))
+        return determinePaperVsRock()
+    else if (wasRockPlayed(choices) && wasScissorsPlayed(choices))
+        return determineRockVsScissors()
+    else if (wasScissorsPlayed(choices) && wasPaperPlayed(choices))
+        return determineScissorsVsPaper()
+    return 'tie';
+}
+
 //determine the winner based on who picked rock, paper or scissors
 
 function didPlayerWin(playerMove, winningMove) {
@@ -61,10 +89,10 @@ function didComputerWin(computerMove, winningMove) {
     return computerMove === winningMove;
 }
 
-function checkWhoWon(playerMove, computerMove) {
-    if (playerMove === calculateWinningMove(playerMove, computerMove))
+function checkWhoWon(choices) {
+    if (playerMove === determineWinningMove(choices))
         return 'player'
-    else if (computerMove === calculateWinningMove(playerMove, computerMove))
+    else if (computerMove === determineWinningMove(choices))
         return 'computer'
     else return 'tie'
 }
@@ -90,7 +118,7 @@ function getNewScoresAfterRound(winner, scores) {
 }
 
 function playRoundThenGetWinner() {
-    return checkWhoWon(getPlayerChoice(), getComputerChoice())
+    return checkWhoWon(getPlayerAndComputerChoices())
 }
 
 function playRounds(maxNumberOfRounds) 
@@ -109,6 +137,7 @@ function playRounds(maxNumberOfRounds)
     }
 }
 
+playRounds(5);
 
 
 

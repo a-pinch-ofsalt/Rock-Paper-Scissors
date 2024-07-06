@@ -1,6 +1,7 @@
 //getting player's input to be valid
 //-----------------------------------------------
 
+/*
 function getPlayerInput() {
     return prompt("Type rock, paper or scissors.").toLowerCase();
 }
@@ -21,6 +22,19 @@ function getValidPlayerChoice() {
     } else {
         return userInput;
     }
+}
+*/
+
+let buttons = {
+    'rock': document.getElementById('rock'),
+    'paper': document.getElementById('paper'),
+    'scissors': document.getElementById('scissors')
+}
+
+for (let [name, button] of Object.entries(buttons)) {
+    button.addEventListener('click', (event) => {
+        
+    });
 }
 
 //getting the computer's choice (it's just random)
@@ -155,5 +169,3 @@ function playRounds(maxRounds) {
         scores = playRoundAndGetScores(scores);
     }
 }
-
-playRounds(5);

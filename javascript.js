@@ -137,15 +137,6 @@ function givePointToWinner(scores, choices) {
     return scores;
 }
 
-function getNewScoresAfterRound(winner, scores) {
-    if (winner === 'player') {
-        scores.player++;
-    } else if (winner === 'computer') {
-        scores.computer++;
-    }
-    return scores;
-}
-
 function playRoundAndGetScores(scores) {
     let choices = getPlayerAndComputerChoices();
 

@@ -2,81 +2,83 @@
 //-----------------------------------------------
 
 function getPlayerInput() {
-    return prompt("Type rock, paper or scissors.").toLowerCase()
+    return prompt("Type rock, paper or scissors.").toLowerCase();
 }
 
-function isRockPaperOrScissors(userInput) {
-    return ['rock', 'paper', 'scissors'].includes(userInput);
+function isInvalidInput(userInput) {
+    return !(['rock', 'paper', 'scissors'].includes(userInput));
 }
 
 function notifyPlayerOfInvalidInput() {
-    console.log('That is not a valid input.\n');
+    alert('That is not a valid input.\n');
 }
 
-function getPlayerFinalChoice() {
-    userInput = getPlayerInput();
-
-    if (isRockPaperOrScissors(userInput))
-        return userInput
-    else
+function getValidPlayerChoice() {
+    let userInput = getPlayerInput();
+    if (isInvalidInput(userInput)) {
         notifyPlayerOfInvalidInput();
-        return getPlayerFinalChoice();
+        return getValidPlayerChoice();
+    } else {
+        return userInput;
+    }
 }
 
 //getting the computer's choice (it's just random)
 //-----------------------------------------------
 
 function chooseRandomPositiveIntegerUpTo(maximum) {
-    return Math.floor(Math.random() * maximum) + 1
+    return Math.floor(Math.random() * maximum) + 1;
 }
 
 function pickRockPaperOrScissorsRandomly() {
-    return ['rock', 'paper', 'scissors'][chooseRandomPositiveIntegerUpTo(3) - 1]
+    return ['rock', 'paper', 'scissors'][chooseRandomPositiveIntegerUpTo(3) - 1];
 }
 
 function getComputerChoice() {
-    return pickRockPaperOrScissorsRandomly()
+    return pickRockPaperOrScissorsRandomly();
 }
 
 //calculating the winning move (rock vs scissors, paper vs rock, etc.)
 //-----------------------------------------------
 
 function getPlayerAndComputerChoices() {
-    return {'player': getPlayerFinalChoice(), 'computer': getComputerChoice()}
+    return { 'player': getValidPlayerChoice(), 'computer': getComputerChoice() };
 }
 
 function wasRockPlayed(choices) {
-    return [choices.player, choices.computer].includes('rock')
+    return [choices.player, choices.computer].includes('rock');
 }
 
 function wasPaperPlayed(choices) {
-    return [choices.player, choices.computer].includes('paper')
+    return [choices.player, choices.computer].includes('paper');
 }
 
 function wasScissorsPlayed(choices) {
-    return [choices.player, choices.computer].includes('scissors')
+    return [choices.player, choices.computer].includes('scissors');
 }
 
-function determineRockVsScissors() {
-    return 'rock'
+function wereRockAndPaperPlayed(choices) {
+    return wasPaperPlayed(choices) && wasRockPlayed(choices);
 }
 
-function determinePaperVsRock() {
-    return 'paper'
+function werePaperAndScissorsPlayed(choices) {
+    return wasScissorsPlayed(choices) && wasScissorsPlayed(choices);
 }
 
-function determineScissorsVsPaper() {
-    return 'scissors'
+function wereRockAndScissorsPlayed(choices) {
+    return wasRockPlayed(choices) && wasScissorsPlayed(choices);
 }
 
 function determineWinningMove(choices) {
-    if (wasRockPlayed(choices) && wasPaperPlayed(choices))
-        return determinePaperVsRock()
-    else if (wasRockPlayed(choices) && wasScissorsPlayed(choices))
-        return determineRockVsScissors()
-    else if (wasScissorsPlayed(choices) && wasPaperPlayed(choices))
-        return determineScissorsVsPaper()
-    return 'tie';
+    if (wereRockAndPaperPlayed(choices)) {
+        return 'paper';
+    } else if (werePaperAndScissorsPlayed(choices)) {
+        return 'scissors';
+    } else if (wereRockAndScissorsPlayed(choices)) {
+        return 'rock';
+    } else {
+        return 'tie';
+    }
 }
 
 //determine the winner based on who picked rock, paper or scissors
@@ -86,60 +88,80 @@ function didPlayerWin(choices) {
 }
 
 function didComputerWin(choices) {
-    return choices.player === determineWinningMove(choices);
+    return choices.computer === determineWinningMove(choices);
 }
 
-function checkWhoWon(choices) {
-    if (didPlayerWin(choices))
-        return 'player'
-    else if (didComputerWin(choices))
-        return 'computer'
-    else return 'tie'
+function wasntATie(choices) {
+    return determineWinningMove(choices) != 'tie';
+}
+
+function getRoundOutcome(choices) {
+    if (didPlayerWin(choices)) {
+        return 'player';
+    } else if (didComputerWin(choices)) {
+        return 'computer';
+    } else {
+        return 'tie';
+    }
+}
+
+function getWinnerIfNotATie(choices) {
+    if (wasntATie(choices)) {
+        return getRoundOutcome(choices);
+    } else {
+        throw new Error("Tried to get the winner even though it was a tie!");
+    }
 }
 
 //announce current game's stats
 
-function outputWinner(winner) {
-    console.log('The ' + winner + ' wins this round!');
+function alertPlayerAndComputerChoices(choices) {
+    alert(`You picked: ${choices.player}. The computer picked ${choices.computer}`);
 }
 
-function outputScores(scores) {
-    console.log(`You: ${scores.player} wins\n Computer: ${scores.computer} wins\n`);
+function alertRoundOutcome(outcome) {
+    alert(`The results of this round are: ${outcome}!`);
 }
 
-function outputChoices(choices) {
-    console.log(`You picked ${choices.player}. Computer picked ${choices.computer}.`)
+function alertScores(scores) {
+    alert(`The scores are:\nPlayer: ${scores.player}\nComputer: ${scores.computer}`);
 }
 
 //play rounds and keep track of score
 
+function givePointToWinner(scores, choices) {
+    if (wasntATie(choices)) {
+        scores[getWinnerIfNotATie(choices)]++;
+    }
+
+    return scores;
+}
+
 function getNewScoresAfterRound(winner, scores) {
-    if (winner === 'player') 
+    if (winner === 'player') {
         scores.player++;
-    else if (winner === 'computer') 
+    } else if (winner === 'computer') {
         scores.computer++;
-    return scores
+    }
+    return scores;
 }
 
-function playRoundThenGetWinner() {
-    choices = getPlayerAndComputerChoices();
-    outputChoices(choices);
-    return checkWhoWon(choices)
+function playRoundAndGetScores(scores) {
+    let choices = getPlayerAndComputerChoices();
+    
+    alertPlayerAndComputerChoices(choices);
+    alertRoundOutcome(getRoundOutcome(choices));
+
+    givePointToWinner(scores, choices);
+    alertScores(scores);
+
+    return scores;
 }
 
-function playRounds(maxNumberOfRounds) 
-{
-    for (
-        let round = 1,
-        scores = {'player': 0, 'computer': 0}
-        ; round <= maxNumberOfRounds
-        ; round++
-    )
-    {
-        winner = playRoundThenGetWinner();
-        scores = getNewScoresAfterRound(scores, winner);
-        outputWinner(winner);
-        outputScores(scores);
+function playRounds(maxRounds) {
+    let scores = { 'player': 0, 'computer': 0 }
+    for (let round = 1; round <= maxRounds; round++) {
+        scores = playRoundAndGetScores(scores);
     }
 }
 
